@@ -1,7 +1,13 @@
 {% block form_row %}
+    {% set has_errors = form.vars.errors|length > 0 %}
     <div class="mb-4">
         {{ form_label(form) }}
-        {{ form_widget(form) }}
+        {% if has_errors %}
+            {% set widget_attr = {attr: {class: 'border-red-300 focus:border-red-500 focus:ring-red-500'}} %}
+            {{ form_widget(form, widget_attr) }}
+        {% else %}
+            {{ form_widget(form) }}
+        {% endif %}
         {{ form_errors(form) }}
     </div>
 {% endblock %}

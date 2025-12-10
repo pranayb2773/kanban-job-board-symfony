@@ -11,8 +11,12 @@
         {% block javascripts %}
             {{ encore_entry_script_tags('app') }}
         {% endblock %}
+        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     </head>
     <body class="h-full">
+        {% if app.user %}
+            {% include 'partials/_header.html.twig' %}
+        {% endif %}
         {% block body %}{% endblock %}
     </body>
 </html>
