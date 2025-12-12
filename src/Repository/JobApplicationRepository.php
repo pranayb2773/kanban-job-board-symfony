@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\JobApplication;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -16,28 +17,27 @@ class JobApplicationRepository extends ServiceEntityRepository
         parent::__construct($registry, JobApplication::class);
     }
 
-    //    /**
-    //     * @return JobApplication[] Returns an array of JobApplication objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('j')
-    //            ->andWhere('j.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('j.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function countByUser(User $user): int
+    {
+        return $this->createQueryBuilder('ja')
+            ->select('COUNT(ja.id)')
+            ->join('ja.jobBoard', 'jb')
+            ->where('jb.user = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 
-    //    public function findOneBySomeField($value): ?JobApplication
-    //    {
-    //        return $this->createQueryBuilder('j')
-    //            ->andWhere('j.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function countByUserAndStatus(User $user, string $status): int
+    {
+        return $this->createQueryBuilder('ja')
+            ->select('COUNT(ja.id)')
+            ->join('ja.jobBoard', 'jb')
+            ->where('jb.user = :user')
+            ->andWhere('ja.status = :status')
+            ->setParameter('user', $user)
+            ->setParameter('status', $status)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

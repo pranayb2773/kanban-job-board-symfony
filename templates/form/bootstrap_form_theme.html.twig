@@ -1,9 +1,9 @@
 {% block form_row %}
     {% set has_errors = form.vars.errors|length > 0 %}
-    <div class="mb-4">
+    <div class="mb-3">
         {{ form_label(form) }}
         {% if has_errors %}
-            {% set widget_attr = {attr: {class: 'border-red-300 focus:border-red-500 focus:ring-red-500'}} %}
+            {% set widget_attr = {attr: {class: 'is-invalid'}} %}
             {{ form_widget(form, widget_attr) }}
         {% else %}
             {{ form_widget(form) }}
@@ -14,10 +14,10 @@
 
 {% block form_label %}
     {% if label is not same as(false) %}
-        <label for="{{ id }}" class="block text-sm font-medium text-gray-700 mb-1">
+        <label for="{{ id }}" class="form-label">
             {{ label }}
             {% if required %}
-                <span class="text-red-500">*</span>
+                <span class="text-danger">*</span>
             {% endif %}
         </label>
     {% endif %}
@@ -25,9 +25,9 @@
 
 {% block form_errors %}
     {% if errors|length > 0 %}
-        <div class="mt-1">
+        <div class="invalid-feedback d-block">
             {% for error in errors %}
-                <p class="text-sm text-red-600">{{ error.message }}</p>
+                {{ error.message }}
             {% endfor %}
         </div>
     {% endif %}
@@ -36,26 +36,29 @@
 {% block form_widget_simple %}
     {% set type = type|default('text') %}
     {% set attr = attr|merge({
-        class: (attr.class|default('') ~ ' block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2 transition-colors')|trim
+        class: (attr.class|default('') ~ ' form-control')|trim
     }) %}
     <input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
 {% endblock %}
 
 {% block checkbox_row %}
-    <div class="mb-4 flex items-start">
-        <div class="flex items-center h-5">
-            {{ form_widget(form) }}
-        </div>
-        <div class="ml-3 text-sm">
-            {{ form_label(form) }}
-            {{ form_errors(form) }}
-        </div>
+    <div class="mb-3 form-check">
+        {{ form_widget(form) }}
+        {{ form_label(form) }}
+        {{ form_errors(form) }}
     </div>
 {% endblock %}
 
 {% block checkbox_widget %}
     {% set attr = attr|merge({
-        class: (attr.class|default('') ~ ' h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500')|trim
+        class: (attr.class|default('') ~ ' form-check-input')|trim
     }) %}
     <input type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
+{% endblock %}
+
+{% block textarea_widget %}
+    {% set attr = attr|merge({
+        class: (attr.class|default('') ~ ' form-control')|trim
+    }) %}
+    <textarea {{ block('widget_attributes') }}>{{ value }}</textarea>
 {% endblock %}

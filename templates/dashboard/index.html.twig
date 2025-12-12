@@ -1,0 +1,79 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block body %}
+<div>
+    <div class="container-fluid px-lg-5 py-4">
+        {% if not has_job_boards %}
+            {# Empty state for new users #}
+            <div class="text-center py-5 px-4">
+                <div class="mx-auto" style="max-width: 500px;">
+                    <i class="bi bi-file-earmark-text text-muted d-block mb-4" style="font-size: 5rem;"></i>
+                    <h2 class="fw-bold mb-3">Welcome to Job Tracker!</h2>
+                    <p class="text-muted mb-4">Get started by creating your first job board to organize and track your job applications.</p>
+                    <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#createJobBoardModal">
+                        <i class="bi bi-plus-circle me-2"></i>
+                        Create Your First Job Board
+                    </button>
+                </div>
+            </div>
+        {% else %}
+            {# Dashboard with data #}
+            <div class="mb-4">
+                <h1 class="h3 fw-bold">Dashboard</h1>
+                <p class="text-muted">Welcome back, {{ app.user.name }}!</p>
+            </div>
+
+            <div class="row g-4 mb-4">
+                <div class="col-md-3">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title text-secondary mb-1">Boards</h5>
+                            <p class="h2 fw-bold text-primary mb-2">{{ job_boards }}</p>
+                            <p class="text-muted small mb-0">Group applications by board</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title text-secondary mb-1">Total Jobs</h5>
+                            <p class="h2 fw-bold text-primary mb-2">{{ total_jobs }}</p>
+                            <p class="text-muted small mb-0">No jobs tracked yet</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title text-secondary mb-1">Applications</h5>
+                            <p class="h2 fw-bold text-primary mb-2">{{ applied_jobs }}</p>
+                            <p class="text-muted small mb-0">Applications submitted</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title text-secondary mb-1">Interviews</h5>
+                            <p class="h2 fw-bold text-primary mb-2">{{ interview_jobs }}</p>
+                            <p class="text-muted small mb-0">Upcoming interviews</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="h5 fw-bold mb-4">Recent Activity</h2>
+                    <p class="text-muted mb-0">No recent activity to display.</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

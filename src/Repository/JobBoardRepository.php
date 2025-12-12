@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\JobBoard;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -16,28 +17,36 @@ class JobBoardRepository extends ServiceEntityRepository
         parent::__construct($registry, JobBoard::class);
     }
 
-    //    /**
-    //     * @return JobBoard[] Returns an array of JobBoard objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('j')
-    //            ->andWhere('j.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('j.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+     * Find the most recent job boards for a given user.
+     *
+     * @param User $user  The owner of the job boards
+     * @param int  $limit Max number of results to return (default 5)
+     * @return JobBoard[]
+     */
+    public function findRecentByUser(User $user, int $limit = 5): array
+    {
+        return $this->createQueryBuilder('j')
+            ->andWhere('j.user = :user')
+            ->setParameter('user', $user)
+            ->orderBy('j.createdAt', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
 
-    //    public function findOneBySomeField($value): ?JobBoard
-    //    {
-    //        return $this->createQueryBuilder('j')
-    //            ->andWhere('j.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function hasJobBoards(User $user): bool
+    {
+        return $this->countByUser($user) > 0;
+    }
+
+    public function countByUser(User $user): int
+    {
+        return $this->createQueryBuilder('j')
+            ->select('COUNT(j.id)')
+            ->andWhere('j.user = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }
