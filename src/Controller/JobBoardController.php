@@ -6,6 +6,7 @@ use App\Entity\JobBoard;
 use App\Form\JobBoardType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -31,10 +32,13 @@ class JobBoardController extends AbstractController
     }
 
     #[Route('/create', name: 'app_job_board_create', methods: ['POST'])]
-    public function create(Request $request, EntityManagerInterface $entityManager): Response
+    public function create(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         $jobBoard = new JobBoard();
-        $form = $this->createForm(JobBoardType::class, $jobBoard);
+        $form = $this->createForm(JobBoardType::class, $jobBoard, [
+            'action' => $this->generateUrl('app_job_board_create'),
+            'method' => 'POST',
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -43,12 +47,23 @@ class JobBoardController extends AbstractController
             $entityManager->persist($jobBoard);
             $entityManager->flush();
 
-            $this->addFlash('success', 'Job board created successfully!');
+            $freshForm = $this->createForm(JobBoardType::class, new JobBoard(), [
+                'action' => $this->generateUrl('app_job_board_create'),
+                'method' => 'POST',
+            ]);
 
-            return $this->redirectToRoute('app_dashboard');
+            return $this->json([
+                'success' => true,
+                'message' => 'Job board created successfully!',
+            ]);
         }
 
-        // If form has errors, redirect back with errors
-        return $this->redirectToRoute('app_dashboard');
+        return $this->json([
+            'success' => false,
+            'message' => 'Please fix the form errors and try again.',
+            'modal' => $this->renderView('partials/_job_board_create_modal.html.twig', [
+                'job_board_form' => $form->createView(),
+            ]),
+        ], Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 }

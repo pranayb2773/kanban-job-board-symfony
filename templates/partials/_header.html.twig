@@ -13,16 +13,16 @@
                     <i class="bi bi-briefcase me-1 d-none d-md-inline"></i>
                     <span class="small">Job Board</span>
                 </a>
-                <ul class="dropdown-menu" aria-labelledby="jobBoardDropdown">
+                <ul class="dropdown-menu" aria-labelledby="jobBoardDropdown" id="jobBoardDropdownMenu">
                     {% if app.user %}
                         {# Use Twig extension to fetch the latest 5 job boards #}
                         {% set user_boards = get_recent_job_boards() %}
                         {% if user_boards|length > 0 %}
-                            <li class="px-3 py-2 border-bottom">
+                            <li class="px-3 py-2 border-bottom" data-role="recent-heading">
                                 <small class="text-muted text-uppercase fw-semibold">Recent Boards</small>
                             </li>
                             {% for jobBoard in user_boards %}
-                                <li>
+                                <li data-role="recent-item">
                                     <a class="dropdown-item py-2 d-flex align-items-center" href="#">
                                         <i class="bi bi-kanban me-2"></i>
                                         <div class="flex-grow-1">
@@ -31,10 +31,12 @@
                                     </a>
                                 </li>
                             {% endfor %}
-                            <li><hr class="dropdown-divider my-1"></li>
+                            <li data-role="recent-divider"><hr class="dropdown-divider my-1"></li>
+                        {% else %}
+                            <li class="px-3 py-2 text-muted small" data-role="recent-empty">No boards yet</li>
                         {% endif %}
                     {% endif %}
-                    <li>
+                    <li data-role="create-action">
                         <button type="button" class="dropdown-item py-2" data-bs-toggle="modal" data-bs-target="#createJobBoardModal">
                             <i class="bi bi-plus-circle me-2"></i>Create New Board
                         </button>
@@ -78,8 +80,115 @@
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                {{ render(path('fragment_job_board_modal')) }}
+                <div id="jobBoardModalFormContainer">
+                    {{ render(path('fragment_job_board_modal')) }}
+                </div>
             </div>
         </div>
     </div>
 </nav>
+
+{# Toast Container #}
+<div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 9999;">
+    <div id="liveToast" class="toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                Hello, world! This is a toast message.
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const modalElement = document.getElementById('createJobBoardModal');
+
+    const showToast = (message, type = 'success') => {
+        const toastElement = document.getElementById('liveToast');
+        const toastBody = toastElement.querySelector('.toast-body');
+
+        toastBody.textContent = message;
+
+        toastElement.classList.remove('text-bg-success', 'text-bg-danger');
+        toastElement.classList.add(type === 'success' ? 'text-bg-success' : 'text-bg-danger');
+
+        const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastElement);
+        toastBootstrap.show();
+    };
+
+    const closeModal = () => {
+        const closeButton = modalElement.querySelector('[data-bs-dismiss="modal"]');
+        if (closeButton) {
+            closeButton.click();
+            return;
+        }
+
+        modalElement.classList.remove('show');
+        modalElement.style.display = 'none';
+        modalElement.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('modal-open');
+        const backdrop = document.querySelector('.modal-backdrop');
+        if (backdrop) {
+            backdrop.remove();
+        }
+    };
+
+    const bindFormHandler = () => {
+        const form = modalElement.querySelector('form');
+        if (!form || form.dataset.ajaxBound) {
+            return;
+        }
+
+        const submitButton = form.querySelector('button[type="submit"]');
+        const defaultButtonContent = submitButton ? submitButton.innerHTML : '';
+        form.dataset.ajaxBound = 'true';
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Saving...';
+            }
+
+            let data;
+            let response;
+            try {
+                response = await fetch(form.action, {
+                    method: 'POST',
+                    headers: {'X-Requested-With': 'XMLHttpRequest'},
+                    body: new FormData(form)
+                });
+                data = await response.json();
+            } catch (error) {
+                showToast('An error occurred. Please try again.', 'error');
+                if (submitButton) {
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = defaultButtonContent;
+                }
+                return;
+            }
+
+            const formContainer = document.getElementById('jobBoardModalFormContainer');
+
+            if (response.ok && data?.success) {
+                closeModal();
+                showToast(data.message || 'Job board created successfully!', 'success');
+                setTimeout(() => window.location.reload(), 1000);
+            } else {
+                formContainer.innerHTML = data?.modal;
+                bindFormHandler();
+                showToast(data?.message || 'Please fix the errors and try again.', 'error');
+            }
+
+            if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.innerHTML = defaultButtonContent;
+            }
+        });
+    };
+
+    bindFormHandler();
+});
+</script>

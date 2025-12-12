@@ -9,5 +9,6 @@ import './stimulus_bootstrap.js';
 // any CSS you import will output into a single css file (app.css in this case)
 import './styles/app.scss';
 
-// Import Bootstrap JavaScript
-import 'bootstrap';
+// Import Bootstrap JavaScript and expose it globally
+import * as bootstrap from 'bootstrap';
+window.bootstrap = bootstrap;
