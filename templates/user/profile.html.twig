@@ -1,0 +1,85 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profile Settings{% endblock %}
+
+{% block body %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            <div class="d-flex align-items-center mb-4">
+                <a href="{{ path('app_dashboard') }}" class="btn btn-link text-decoration-none p-0 me-3">
+                    <i class="bi bi-arrow-left"></i>
+                </a>
+                <h1 class="mb-0">Profile Settings</h1>
+            </div>
+
+            {# Flash Messages #}
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ label == 'error' ? 'danger' : label }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
+            {# Profile Information Card #}
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0 d-flex align-items-center">
+                        <i class="bi bi-person-circle text-primary me-2"></i>
+                        Personal Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {{ form_start(profile_form, {'action': path('app_user_profile_update'), 'method': 'POST'}) }}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form_row(profile_form.name) }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form_row(profile_form.email) }}
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-lg me-1"></i>Update Profile
+                            </button>
+                        </div>
+                    {{ form_end(profile_form) }}
+                </div>
+            </div>
+
+            {# Password Change Card #}
+            <div class="card shadow-sm">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0 d-flex align-items-center">
+                        <i class="bi bi-shield-lock text-primary me-2"></i>
+                        Change Password
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {{ form_start(password_form, {'action': path('app_user_change_password'), 'method': 'POST'}) }}
+                        <div class="mb-3">
+                            {{ form_row(password_form.currentPassword) }}
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form_row(password_form.newPassword.first) }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form_row(password_form.newPassword.second) }}
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-key me-1"></i>Change Password
+                            </button>
+                        </div>
+                    {{ form_end(password_form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
