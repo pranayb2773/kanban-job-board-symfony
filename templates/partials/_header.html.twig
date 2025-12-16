@@ -23,7 +23,7 @@
                             </li>
                             {% for jobBoard in user_boards %}
                                 <li data-role="recent-item">
-                                    <a class="dropdown-item py-2 d-flex align-items-center" href="#">
+                                    <a class="dropdown-item py-2 d-flex align-items-center" href="{{ path('app_job_board_kanban', {'id': jobBoard.id}) }}">
                                         <i class="bi bi-kanban me-2"></i>
                                         <div class="flex-grow-1">
                                             <div class="text-truncate" style="max-width: 200px;">{{ jobBoard.name }}</div>

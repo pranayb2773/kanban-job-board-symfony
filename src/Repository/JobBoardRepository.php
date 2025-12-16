@@ -49,4 +49,18 @@ class JobBoardRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult();
     }
+
+    /**
+     * Find a job board by ID, ensuring it belongs to the given user
+     */
+    public function findOneByIdAndUser(int $id, User $user): ?JobBoard
+    {
+        return $this->createQueryBuilder('j')
+            ->where('j.id = :id')
+            ->andWhere('j.user = :user')
+            ->setParameter('id', $id)
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

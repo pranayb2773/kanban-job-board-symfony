@@ -39,7 +39,7 @@ class JobApplication
     private ?string $description = null;
 
     #[ORM\Column(length: 50)]
-    #[Assert\Choice(choices: ['wishlist', 'applied', 'interviewed', 'offered', 'rejected'])]
+    #[Assert\Choice(choices: ['wishlist', 'applied', 'interview', 'rejected', 'accepted', 'offered'])]
     private ?string $status = null;
 
     #[ORM\ManyToOne(inversedBy: 'JobApplications')]
