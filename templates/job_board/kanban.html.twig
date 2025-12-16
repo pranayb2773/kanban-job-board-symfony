@@ -34,7 +34,7 @@
         <div class="row g-3">
             {% for status in statuses %}
                 <div class="col-lg-2 col-md-4 col-sm-6">
-                    <div class="kanban-column">
+                    <div class="kanban-column" data-status="{{ status.value }}">
                         {# Column Header #}
                         <div class="kanban-column-header bg-light p-3 rounded-top border">
                             <h6 class="fw-bold mb-0 d-flex align-items-center justify-content-between">
