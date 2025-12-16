@@ -12,6 +12,19 @@ A modern job application tracking system built with Symfony 8.0 that helps you o
 
 Kanban Job Board is a full-featured web application that allows users to track their job applications through different stages of the hiring process. With a visual drag-and-drop Kanban interface, users can easily visualize and manage their job search journey from wishlist to acceptance.
 
+## 📸 Screenshots & Demo
+
+### Demo Video
+- `public/job_tracker_demo.mp4`
+
+### Screenshots
+| Landing Page | Dashboard |
+| --- | --- |
+| ![Landing Page 1](public/landing_page_1.png) | ![Dashboard](public/dashboard.png) |
+| ![Landing Page 2](public/landing_page_2.png) | ![Kanban Board](public/job_board_kanban.png) |
+| ![Landing Page 3](public/landing_page_3.png) | ![Application Details](public/job_application_details.png) |
+|  | ![Application Edit](public/job_application_edit.png) |
+
 **Perfect for:**
 - Job seekers tracking multiple applications
 - Career changers managing their transition
@@ -144,30 +157,30 @@ All users use the password: `password123`
 
 | Name | Email |
 |------|-------|
-| John Doe | john.doe@example.com |
-| Jane Smith | jane.smith@example.com |
-| Michael Johnson | michael.johnson@example.com |
-| Emily Davis | emily.davis@example.com |
-| David Wilson | david.wilson@example.com |
-| Sarah Brown | sarah.brown@example.com |
-| Robert Garcia | robert.garcia@example.com |
-| Lisa Martinez | lisa.martinez@example.com |
-| James Anderson | james.anderson@example.com |
-| Jennifer Taylor | jennifer.taylor@example.com |
+| Oliver Smith | oliver.smith@example.co.uk |
+| Amelia Jones | amelia.jones@example.co.uk |
+| Harry Taylor | harry.taylor@example.co.uk |
+| Emily Brown | emily.brown@example.co.uk |
+| George Wilson | george.wilson@example.co.uk |
+| Isla Johnson | isla.johnson@example.co.uk |
+| Noah Davies | noah.davies@example.co.uk |
+| Ava Thomas | ava.thomas@example.co.uk |
+| Jack Evans | jack.evans@example.co.uk |
+| Sophia Roberts | sophia.roberts@example.co.uk |
 
 #### 📊 Data Volume
 - **~30 Job Boards** (each user gets 2-4 boards)
 - **~300-400 Job Applications** distributed across all statuses
 
 #### 🏢 Companies (50+)
-**FAANG & Big Tech:**
-- Google, Meta (Facebook), Amazon, Apple, Netflix
-- Microsoft, Oracle, IBM, Adobe, Salesforce
+Fixtures are UK-focused (companies, locations, and GBP salary ranges).
 
-**Popular Startups & Scale-ups:**
-- Stripe, GitLab, GitHub, Atlassian, Figma, Notion
-- Uber, Lyft, Airbnb, DoorDash, Instacart
-- Slack, Zoom, Shopify, Square, Dropbox
+**UK tech, fintech & enterprise (examples):**
+- ARM, BBC, BT, Vodafone, Sky
+- Monzo, Starling Bank, Revolut, Wise, Checkout.com
+- Ocado Technology, Deliveroo, Just Eat, Trainline, Rightmove
+- Barclays, HSBC, NatWest Group, Lloyds Banking Group
+- DeepMind, Google (London), Microsoft (UK), Amazon (UK), Apple (UK)
 
 **Data & Cloud Companies:**
 - MongoDB, Snowflake, DataDog, Elastic, Confluent
@@ -239,7 +252,7 @@ Visit: **http://localhost:8000**
 
 ### Login Credentials (After Loading Fixtures)
 ```
-Email: john.doe@example.com
+Email: oliver.smith@example.co.uk
 Password: password123
 ```
 
@@ -375,7 +388,7 @@ kanban-job-board-symfony/
 
 ### 2. Create a Job Board
 - After login, click **"New Job Board"** from the dashboard
-- Enter board name (e.g., "FAANG Applications")
+- Enter board name (e.g., "FinTech & Banking")
 - Add optional description
 - Submit the form
 
@@ -386,11 +399,11 @@ kanban-job-board-symfony/
 ### 4. Add Job Application
 - Click the **"+ Add Application"** button on the Kanban board
 - Fill in the application details:
-  - **Company name** (required) - e.g., "Google"
+  - **Company name** (required) - e.g., "Monzo"
   - **Job title** (required) - e.g., "Senior Software Engineer"
-  - **Location** (required) - e.g., "Mountain View, CA" or "Remote"
+  - **Location** (required) - e.g., "London" or "Remote (UK)"
   - **URL** (optional) - Link to job posting
-  - **Salary** (optional) - e.g., "$150,000 - $200,000"
+  - **Salary** (optional) - e.g., "£65,000 - £95,000"
   - **Description** (required) - Job description or notes
   - **Initial status** - Select from dropdown
 - Click **Submit** to create
@@ -431,10 +444,10 @@ kanban-job-board-symfony/
 ### 7. Multiple Job Boards
 - Create different boards for different job searches
 - Example boards:
-  - "FAANG Applications"
-  - "Remote Only Jobs"
+  - "London & South East"
+  - "Remote & Hybrid (UK)"
   - "Senior Positions"
-  - "Startup Opportunities"
+  - "Data & ML"
 
 ## 🔧 Development
 
@@ -651,78 +664,3 @@ php bin/console cache:pool:clear cache.app
 2. Verify Stimulus controllers are loaded: Check for `[data-controller]` attributes
 3. Ensure Webpack build completed successfully
 4. Clear browser cache and hard reload (Ctrl+Shift+R / Cmd+Shift+R)
-
-## 🤝 Contributing
-
-Contributions are welcome! Please follow these guidelines:
-
-### Getting Started
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Make your changes
-4. Write or update tests as needed
-5. Ensure all tests pass (`php bin/phpunit`)
-6. Commit your changes (`git commit -m 'Add some amazing feature'`)
-7. Push to the branch (`git push origin feature/amazing-feature`)
-8. Open a Pull Request
-
-### Contribution Guidelines
-- Follow PSR-12 coding standards for PHP
-- Write tests for new features (aim for 100% coverage)
-- Update documentation as needed
-- Ensure all tests pass before submitting PR
-- Keep commits focused and atomic
-- Write clear commit messages
-
-### Code Review Process
-1. Automated tests must pass
-2. Code review by maintainers
-3. Address any feedback
-4. Approval and merge
-
-## 📄 License
-
-This project is proprietary software. All rights reserved.
-
-## 🙏 Acknowledgments
-
-Built with amazing open-source tools:
-
-- [Symfony](https://symfony.com/) - The PHP framework
-- [Bootstrap](https://getbootstrap.com/) - UI framework
-- [SortableJS](https://sortablejs.github.io/Sortable/) - Drag-and-drop library
-- [Bootstrap Icons](https://icons.getbootstrap.com/) - Icon library
-- [Stimulus](https://stimulus.hotwired.dev/) - JavaScript framework
-- [Doctrine](https://www.doctrine-project.org/) - Database ORM
-- [Twig](https://twig.symfony.com/) - Template engine
-- [PHPUnit](https://phpunit.de/) - Testing framework
-
-## 📞 Support
-
-For issues, questions, or contributions:
-
-- 🐛 **Bug Reports**: Open an issue on GitHub
-- 💡 **Feature Requests**: Open an issue with the `enhancement` label
-- 📖 **Documentation**: Check the `/docs` folder (if available)
-- 💬 **Questions**: Open a discussion on GitHub
-
-## 🗺️ Roadmap
-
-Future enhancements planned:
-
-- [ ] Export job applications to CSV/PDF
-- [ ] Email notifications for status changes
-- [ ] Calendar integration for interviews
-- [ ] Application statistics and analytics
-- [ ] File attachments (resume, cover letter)
-- [ ] Notes and comments on applications
-- [ ] Sharing boards with team members
-- [ ] Mobile app (iOS/Android)
-- [ ] Browser extension for quick job saving
-- [ ] Integration with job boards (LinkedIn, Indeed, etc.)
-
----
-
-**Built with ❤️ using Symfony 8.0 and modern web technologies**
-
-**Happy Job Hunting!** 🎯

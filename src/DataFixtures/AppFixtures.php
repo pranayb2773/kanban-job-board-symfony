@@ -13,14 +13,15 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 class AppFixtures extends Fixture
 {
     private array $companies = [
-        'Google', 'Microsoft', 'Amazon', 'Meta', 'Apple', 'Netflix', 'Stripe',
-        'GitLab', 'GitHub', 'Atlassian', 'Salesforce', 'Adobe', 'Oracle',
-        'IBM', 'Intel', 'NVIDIA', 'AMD', 'Cisco', 'VMware', 'Red Hat',
-        'Uber', 'Lyft', 'Airbnb', 'DoorDash', 'Instacart', 'Dropbox',
-        'Slack', 'Zoom', 'Shopify', 'Square', 'PayPal', 'Twitter', 'LinkedIn',
-        'Snap', 'Pinterest', 'Spotify', 'Twilio', 'Cloudflare', 'DataDog',
-        'MongoDB', 'Snowflake', 'HashiCorp', 'Elastic', 'Confluent', 'Unity',
-        'Epic Games', 'Roblox', 'Discord', 'Figma', 'Notion', 'Canva'
+        'ARM', 'BBC', 'BT', 'Vodafone', 'Sky', 'Ocado Technology', 'Deliveroo',
+        'Just Eat', 'Wise', 'Revolut', 'Monzo', 'Starling Bank', 'Checkout.com',
+        'Google (London)', 'Amazon (UK)', 'Microsoft (UK)', 'Apple (UK)',
+        'Meta (London)', 'Spotify', 'Atlassian', 'Stripe',
+        'Barclays', 'HSBC', 'Lloyds Banking Group', 'NatWest Group', 'Santander UK',
+        'Jaguar Land Rover', 'BAE Systems', 'Rolls-Royce', 'Shell (UK)',
+        'Deloitte', 'Accenture', 'KPMG', 'PwC', 'EY',
+        'DeepMind', 'Trainline', 'Rightmove', 'Zoopla', 'ASOS', 'Tesco',
+        'National Grid', 'GSK', 'AstraZeneca'
     ];
 
     private array $jobTitles = [
@@ -37,14 +38,11 @@ class AppFixtures extends Fixture
     ];
 
     private array $locations = [
-        'Remote', 'San Francisco, CA', 'New York, NY', 'Seattle, WA',
-        'Austin, TX', 'Boston, MA', 'Denver, CO', 'Portland, OR',
-        'Los Angeles, CA', 'Chicago, IL', 'Miami, FL', 'Atlanta, GA',
-        'Mountain View, CA', 'Palo Alto, CA', 'Menlo Park, CA',
-        'Sunnyvale, CA', 'Redmond, WA', 'Santa Monica, CA',
-        'Boulder, CO', 'Cambridge, MA', 'Arlington, VA', 'Raleigh, NC',
-        'Phoenix, AZ', 'Salt Lake City, UT', 'Dallas, TX', 'Houston, TX',
-        'Philadelphia, PA', 'San Diego, CA', 'Washington, DC'
+        'Remote (UK)', 'Hybrid (London)', 'London', 'Manchester', 'Birmingham',
+        'Bristol', 'Leeds', 'Liverpool', 'Newcastle upon Tyne', 'Sheffield',
+        'Nottingham', 'Cambridge', 'Oxford', 'Reading', 'Milton Keynes',
+        'Edinburgh', 'Glasgow', 'Cardiff', 'Belfast', 'Brighton',
+        'Bath', 'Leicester', 'Southampton', 'Portsmouth'
     ];
 
     private array $statuses = [
@@ -61,16 +59,16 @@ class AppFixtures extends Fixture
         // Create 10 users
         $users = [];
         $userNames = [
-            ['John Doe', 'john.doe@example.com'],
-            ['Jane Smith', 'jane.smith@example.com'],
-            ['Michael Johnson', 'michael.johnson@example.com'],
-            ['Emily Davis', 'emily.davis@example.com'],
-            ['David Wilson', 'david.wilson@example.com'],
-            ['Sarah Brown', 'sarah.brown@example.com'],
-            ['Robert Garcia', 'robert.garcia@example.com'],
-            ['Lisa Martinez', 'lisa.martinez@example.com'],
-            ['James Anderson', 'james.anderson@example.com'],
-            ['Jennifer Taylor', 'jennifer.taylor@example.com'],
+            ['Oliver Smith', 'oliver.smith@example.co.uk'],
+            ['Amelia Jones', 'amelia.jones@example.co.uk'],
+            ['Harry Taylor', 'harry.taylor@example.co.uk'],
+            ['Emily Brown', 'emily.brown@example.co.uk'],
+            ['George Wilson', 'george.wilson@example.co.uk'],
+            ['Isla Johnson', 'isla.johnson@example.co.uk'],
+            ['Noah Davies', 'noah.davies@example.co.uk'],
+            ['Ava Thomas', 'ava.thomas@example.co.uk'],
+            ['Jack Evans', 'jack.evans@example.co.uk'],
+            ['Sophia Roberts', 'sophia.roberts@example.co.uk'],
         ];
 
         foreach ($userNames as [$name, $email]) {
@@ -86,16 +84,16 @@ class AppFixtures extends Fixture
 
         // Create job boards for users
         $boardTemplates = [
-            ['Software Engineering Jobs', 'Tracking software engineering positions'],
-            ['Remote Opportunities', 'Work from anywhere positions'],
-            ['Senior Level Roles', 'Senior and staff level opportunities'],
-            ['Startup Jobs', 'Early stage startup opportunities'],
-            ['FAANG Applications', 'Applications to big tech companies'],
-            ['Data Science Positions', 'Data science and ML roles'],
-            ['Frontend Development', 'Frontend and UI engineering roles'],
-            ['Backend Engineering', 'Backend and infrastructure positions'],
-            ['Full Stack Roles', 'Full stack development opportunities'],
-            ['DevOps Positions', 'DevOps and SRE roles'],
+            ['Software Engineering (UK)', 'Tracking UK software engineering roles'],
+            ['London & South East', 'Roles in London and the South East'],
+            ['Remote & Hybrid (UK)', 'Remote-first and hybrid opportunities'],
+            ['Senior Roles', 'Senior and staff level opportunities'],
+            ['FinTech & Banking', 'Banks, FinTechs, and payments companies'],
+            ['Data & ML', 'Data engineering, analytics, and ML roles'],
+            ['Frontend (React/TypeScript)', 'UI engineering roles'],
+            ['Backend & Platform', 'Backend, APIs, and infrastructure roles'],
+            ['Full Stack', 'Full stack opportunities across the UK'],
+            ['DevOps & SRE', 'Reliability, cloud, and platform roles'],
         ];
 
         $boards = [];
@@ -135,9 +133,9 @@ class AppFixtures extends Fixture
                 $app->setJobBoard($board);
 
                 // Generate realistic salary range
-                $baseSalary = rand(80, 250) * 1000;
-                $topSalary = $baseSalary + rand(30, 80) * 1000;
-                $app->setSalary('$' . number_format($baseSalary) . ' - $' . number_format($topSalary));
+                $baseSalary = rand(35, 130) * 1000;
+                $topSalary = $baseSalary + rand(5, 45) * 1000;
+                $app->setSalary('£' . number_format($baseSalary) . ' - £' . number_format($topSalary));
 
                 // Add URL
                 $app->setUrl($this->generateJobUrl($company));
@@ -207,7 +205,7 @@ class AppFixtures extends Fixture
         echo "  - " . count($boards) . " job boards\n";
         echo "  - {$applicationCount} job applications\n";
         echo "\nSample login credentials:\n";
-        echo "  Email: john.doe@example.com\n";
+        echo "  Email: oliver.smith@example.co.uk\n";
         echo "  Password: password123\n";
         echo "\nAll users use the same password: password123\n";
         echo "========================================\n\n";
@@ -215,21 +213,27 @@ class AppFixtures extends Fixture
 
     private function generateJobUrl(string $company): string
     {
-        $companySlug = strtolower(str_replace(' ', '', $company));
+        $companySlug = preg_replace('/[^a-z0-9]+/', '', strtolower($company));
         $domains = [
-            'Google' => 'https://careers.google.com/jobs/',
-            'Microsoft' => 'https://careers.microsoft.com/jobs/',
-            'Amazon' => 'https://www.amazon.jobs/en/jobs/',
-            'Meta' => 'https://www.metacareers.com/jobs/',
-            'Apple' => 'https://jobs.apple.com/en-us/details/',
-            'Netflix' => 'https://jobs.netflix.com/jobs/',
+            'ARM' => 'https://careers.arm.com/job/',
+            'BBC' => 'https://www.bbc.co.uk/careers/job/',
+            'Deliveroo' => 'https://careers.deliveroo.co.uk/jobs/',
+            'Monzo' => 'https://monzo.com/careers/',
+            'Revolut' => 'https://www.revolut.com/careers/positions/',
+            'Wise' => 'https://www.wise.jobs/role/',
+            'Trainline' => 'https://jobs.trainline.com/jobs/',
+            'Rightmove' => 'https://careers.rightmove.co.uk/jobs/',
+            'AstraZeneca' => 'https://careers.astrazeneca.com/job/',
+            'Google (London)' => 'https://careers.google.com/jobs/',
+            'Microsoft (UK)' => 'https://careers.microsoft.com/v2/global/en/search?lc=United%20Kingdom&',
+            'Amazon (UK)' => 'https://www.amazon.jobs/en/search?base_query=&loc_query=United%20Kingdom&',
+            'Apple (UK)' => 'https://jobs.apple.com/en-gb/search?location=united-kingdom-GBR&',
+            'Meta (London)' => 'https://www.metacareers.com/jobs/',
             'Stripe' => 'https://stripe.com/jobs/listing/',
-            'GitLab' => 'https://about.gitlab.com/jobs/apply/',
-            'GitHub' => 'https://github.com/careers/',
             'Atlassian' => 'https://www.atlassian.com/company/careers/detail/',
         ];
 
-        $baseUrl = $domains[$company] ?? "https://{$companySlug}.com/careers/";
+        $baseUrl = $domains[$company] ?? "https://www.linkedin.com/jobs/search/?keywords={$companySlug}&location=United%20Kingdom&";
         return $baseUrl . uniqid();
     }
 
