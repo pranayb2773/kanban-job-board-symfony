@@ -1,0 +1,350 @@
+{% extends 'landing/base.html.twig' %}
+
+{% block title %}Job Tracker · Track applications, effortlessly{% endblock %}
+
+{% block meta %}
+    <meta name="description" content="A modern job application tracking system built with Symfony and Bootstrap. Organize your job search with a fast, intuitive Kanban board.">
+{% endblock %}
+
+{% block body_class %}landing-page{% endblock %}
+
+{% block body %}
+    <header class="landing-nav sticky-top">
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <div class="container py-2">
+                <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="{{ path('app_home') }}">
+                    <span class="landing-mark d-inline-flex align-items-center justify-content-center">
+                        <i class="bi bi-clipboard-check"></i>
+                    </span>
+                    <span class="d-none d-sm-inline">Job Tracker</span>
+                    <span class="d-inline d-sm-none">Jobs</span>
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#landingNav" aria-controls="landingNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="landingNav">
+                    <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+                        <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#how">How it works</a></li>
+                        {% if app.user %}
+                            <li class="nav-item ms-lg-2">
+                                <a class="btn btn-primary w-100 mt-2 mt-lg-0" href="{{ path('app_dashboard') }}">
+                                    Dashboard <i class="bi bi-arrow-right ms-2"></i>
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item ms-lg-2">
+                                <a class="btn btn-outline-primary w-100 mt-2 mt-lg-0" href="{{ path('app_login') }}">Sign in</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-primary w-100 mt-2 mt-lg-0" href="{{ path('app_register') }}">Create account</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="landing-hero">
+            <div class="container py-5 py-lg-5 position-relative">
+                <div class="row align-items-center g-5">
+                    <div class="col-lg-6">
+                        <div class="d-inline-flex align-items-center gap-2 small px-3 py-2 rounded-pill landing-pill mb-3">
+                            <i class="bi bi-lightning-charge-fill"></i>
+                            <span>Fast, visual job tracking with a Kanban board</span>
+                        </div>
+
+                        <h1 class="display-5 fw-semibold text-white mb-3">
+                            Turn your job search into a clear, actionable workflow.
+                        </h1>
+                        <p class="lead text-white-50 mb-4">
+                            Organize applications across stages, capture key details, and stay on top of next steps — all in one place.
+                        </p>
+
+                        <div class="d-flex flex-column flex-sm-row gap-3">
+                            {% if app.user %}
+                                <a class="btn btn-primary btn-lg px-4" href="{{ path('app_dashboard') }}">
+                                    Go to dashboard <i class="bi bi-arrow-right ms-2"></i>
+                                </a>
+                            {% else %}
+                                <a class="btn btn-primary btn-lg px-4" href="{{ path('app_register') }}">
+                                    Get started free
+                                    <i class="bi bi-arrow-right ms-2"></i>
+                                </a>
+                                <a class="btn btn-outline-light btn-lg px-4" href="{{ path('app_login') }}">
+                                    Sign in
+                                </a>
+                            {% endif %}
+                        </div>
+
+                        <div class="row g-3 mt-4">
+                            <div class="col-12 col-sm-4">
+                                <div class="landing-metric">
+                                    <div class="landing-metric__value">6</div>
+                                    <div class="landing-metric__label">Built‑in stages</div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-4">
+                                <div class="landing-metric">
+                                    <div class="landing-metric__value"><i class="bi bi-arrows-move"></i></div>
+                                    <div class="landing-metric__label">Drag &amp; drop</div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-4">
+                                <div class="landing-metric">
+                                    <div class="landing-metric__value"><i class="bi bi-bell-fill"></i></div>
+                                    <div class="landing-metric__label">Instant feedback</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="landing-preview shadow-lg">
+                            <div class="landing-preview__top d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="dot bg-danger"></span>
+                                    <span class="dot bg-warning"></span>
+                                    <span class="dot bg-success"></span>
+                                </div>
+                                <div class="small text-muted">Kanban Board</div>
+                            </div>
+
+                            <div class="landing-preview__body">
+                                <div class="row g-3">
+                                    {% set cols = [
+                                        {'title': 'Wishlist', 'badge': '3', 'color': 'secondary'},
+                                        {'title': 'Applied', 'badge': '4', 'color': 'primary'},
+                                        {'title': 'Interview', 'badge': '2', 'color': 'info'}
+                                    ] %}
+                                    {% for col in cols %}
+                                        <div class="col-12 col-md-4">
+                                            <div class="p-3 rounded-3 bg-body-tertiary border h-100">
+                                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                                    <div class="fw-semibold">{{ col.title }}</div>
+                                                    <span class="badge text-bg-{{ col.color }} rounded-pill">{{ col.badge }}</span>
+                                                </div>
+                                                <div class="d-grid gap-2">
+                                                    <div class="card border-0 shadow-sm">
+                                                        <div class="card-body p-3">
+                                                            <div class="fw-semibold small">Acme Inc</div>
+                                                            <div class="text-muted small">Frontend Engineer</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card border-0 shadow-sm">
+                                                        <div class="card-body p-3">
+                                                            <div class="fw-semibold small">Nimbus</div>
+                                                            <div class="text-muted small">Software Developer</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card border-0 shadow-sm landing-card--ghost">
+                                                        <div class="card-body p-3">
+                                                            <div class="placeholder-glow">
+                                                                <span class="placeholder col-7"></span>
+                                                                <span class="placeholder col-4"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                <div class="small text-muted mt-3">
+                                    Preview only. Your real board supports all stages and details.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-5 py-lg-5" id="features">
+            <div class="container">
+                <div class="row align-items-end mb-4 g-3">
+                    <div class="col-lg-7">
+                        <h2 class="h1 fw-semibold mb-2">Everything you need to stay organized</h2>
+                        <p class="text-muted mb-0">Built for clarity, speed, and focus — so you spend less time tracking and more time applying.</p>
+                    </div>
+                    <div class="col-lg-5 text-lg-end">
+                        {% if app.user %}
+                            <a class="btn btn-outline-secondary" href="{{ path('app_dashboard') }}">
+                                Open dashboard <i class="bi bi-arrow-right ms-2"></i>
+                            </a>
+                        {% else %}
+                            <a class="btn btn-outline-secondary" href="{{ path('app_register') }}">
+                                Create your first board <i class="bi bi-arrow-right ms-2"></i>
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 border-0 shadow-sm landing-feature">
+                            <div class="card-body p-4">
+                                <div class="landing-icon bg-primary bg-opacity-10 text-primary">
+                                    <i class="bi bi-kanban"></i>
+                                </div>
+                                <h3 class="h5 fw-semibold mt-3">Kanban workflow</h3>
+                                <p class="text-muted mb-0">Visualize your pipeline across stages from Wishlist to Offer and keep momentum.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 border-0 shadow-sm landing-feature">
+                            <div class="card-body p-4">
+                                <div class="landing-icon bg-success bg-opacity-10 text-success">
+                                    <i class="bi bi-arrows-move"></i>
+                                </div>
+                                <h3 class="h5 fw-semibold mt-3">Drag &amp; drop</h3>
+                                <p class="text-muted mb-0">Move applications between columns instantly with smooth interactions.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 border-0 shadow-sm landing-feature">
+                            <div class="card-body p-4">
+                                <div class="landing-icon bg-info bg-opacity-10 text-info">
+                                    <i class="bi bi-journal-text"></i>
+                                </div>
+                                <h3 class="h5 fw-semibold mt-3">Rich details</h3>
+                                <p class="text-muted mb-0">Track company, role, location, salary, links, notes, and key dates.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 border-0 shadow-sm landing-feature">
+                            <div class="card-body p-4">
+                                <div class="landing-icon bg-warning bg-opacity-10 text-warning">
+                                    <i class="bi bi-lightning-charge"></i>
+                                </div>
+                                <h3 class="h5 fw-semibold mt-3">AJAX modals</h3>
+                                <p class="text-muted mb-0">Create, edit, and view applications quickly without losing your place.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 border-0 shadow-sm landing-feature">
+                            <div class="card-body p-4">
+                                <div class="landing-icon bg-danger bg-opacity-10 text-danger">
+                                    <i class="bi bi-shield-lock"></i>
+                                </div>
+                                <h3 class="h5 fw-semibold mt-3">Secure by default</h3>
+                                <p class="text-muted mb-0">Authentication, authorization, and per‑user data isolation built in.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 border-0 shadow-sm landing-feature">
+                            <div class="card-body p-4">
+                                <div class="landing-icon bg-secondary bg-opacity-10 text-secondary">
+                                    <i class="bi bi-phone"></i>
+                                </div>
+                                <h3 class="h5 fw-semibold mt-3">Responsive UI</h3>
+                                <p class="text-muted mb-0">Looks great on desktop and mobile with Bootstrap 5 styling.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-5 py-lg-5 bg-body-tertiary" id="how">
+            <div class="container">
+                <div class="row mb-4">
+                    <div class="col-lg-8">
+                        <h2 class="h1 fw-semibold mb-2">Set up in minutes</h2>
+                        <p class="text-muted mb-0">A simple flow that keeps your process consistent and easy to maintain.</p>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="landing-step p-4 h-100">
+                            <div class="landing-step__num">1</div>
+                            <h3 class="h5 fw-semibold mt-3">Create a board</h3>
+                            <p class="text-muted mb-0">Organize by role, industry, or timeframe — one board per search.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="landing-step p-4 h-100">
+                            <div class="landing-step__num">2</div>
+                            <h3 class="h5 fw-semibold mt-3">Add applications</h3>
+                            <p class="text-muted mb-0">Capture details that matter, from job links to compensation ranges.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="landing-step p-4 h-100">
+                            <div class="landing-step__num">3</div>
+                            <h3 class="h5 fw-semibold mt-3">Move through stages</h3>
+                            <p class="text-muted mb-0">Drag cards across columns as your status changes, with timestamps tracked.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-5 py-lg-5">
+            <div class="container">
+                <div class="p-4 p-lg-5 rounded-4 border bg-white shadow-sm">
+                    <div class="row align-items-center g-4">
+                        <div class="col-lg-7">
+                            <h2 class="h1 fw-semibold mb-2">Ready to simplify your tracking?</h2>
+                            <p class="text-muted mb-0">Start with a board, add your current applications, and keep everything moving.</p>
+                        </div>
+                        <div class="col-lg-5 text-lg-end">
+                            <div class="d-flex flex-column flex-sm-row justify-content-lg-end gap-3">
+                                {% if app.user %}
+                                    <a class="btn btn-primary btn-lg px-4" href="{{ path('app_dashboard') }}">Go to dashboard</a>
+                                {% else %}
+                                    <a class="btn btn-primary btn-lg px-4" href="{{ path('app_register') }}">Create account</a>
+                                    <a class="btn btn-outline-secondary btn-lg px-4" href="{{ path('app_login') }}">Sign in</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="my-4">
+                    <div class="d-flex gap-3 flex-wrap text-muted small">
+                        <span><i class="bi bi-check2-circle me-1"></i>Bootstrap 5 UI</span>
+                        <span><i class="bi bi-check2-circle me-1"></i>Symfony 8 backend</span>
+                        <span><i class="bi bi-check2-circle me-1"></i>Kanban workflow</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="py-5 border-top bg-white">
+            <div class="container">
+                <div class="row g-4 align-items-center">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center gap-2 fw-semibold">
+                            <span class="landing-mark d-inline-flex align-items-center justify-content-center">
+                                <i class="bi bi-clipboard-check"></i>
+                            </span>
+                            <span>Job Tracker</span>
+                        </div>
+                        <div class="text-muted small mt-2">
+                            Track applications with clarity. Built with Symfony and Bootstrap.
+                        </div>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        {% if app.user %}
+                            <a class="text-decoration-none me-3" href="{{ path('app_dashboard') }}">Dashboard</a>
+                        {% else %}
+                            <a class="text-decoration-none me-3" href="{{ path('app_login') }}">Sign in</a>
+                            <a class="text-decoration-none me-3" href="{{ path('app_register') }}">Create account</a>
+                        {% endif %}
+                        <a class="text-decoration-none" href="#features">Features</a>
+                        <div class="text-muted small mt-2">&copy; {{ "now"|date("Y") }} Kanban Job Board</div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </main>
+{% endblock %}
