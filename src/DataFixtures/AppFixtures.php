@@ -2,7 +2,6 @@
 
 namespace App\DataFixtures;
 
-
 use App\Entity\JobApplication;
 use App\Entity\JobBoard;
 use App\Entity\User;
@@ -13,6 +12,45 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
 {
+    private array $companies = [
+        'Google', 'Microsoft', 'Amazon', 'Meta', 'Apple', 'Netflix', 'Stripe',
+        'GitLab', 'GitHub', 'Atlassian', 'Salesforce', 'Adobe', 'Oracle',
+        'IBM', 'Intel', 'NVIDIA', 'AMD', 'Cisco', 'VMware', 'Red Hat',
+        'Uber', 'Lyft', 'Airbnb', 'DoorDash', 'Instacart', 'Dropbox',
+        'Slack', 'Zoom', 'Shopify', 'Square', 'PayPal', 'Twitter', 'LinkedIn',
+        'Snap', 'Pinterest', 'Spotify', 'Twilio', 'Cloudflare', 'DataDog',
+        'MongoDB', 'Snowflake', 'HashiCorp', 'Elastic', 'Confluent', 'Unity',
+        'Epic Games', 'Roblox', 'Discord', 'Figma', 'Notion', 'Canva'
+    ];
+
+    private array $jobTitles = [
+        'Software Engineer', 'Senior Software Engineer', 'Staff Software Engineer',
+        'Principal Engineer', 'Software Developer', 'Full Stack Developer',
+        'Frontend Engineer', 'Backend Engineer', 'DevOps Engineer',
+        'Site Reliability Engineer', 'Cloud Engineer', 'Data Engineer',
+        'Machine Learning Engineer', 'AI Research Scientist', 'Data Scientist',
+        'Product Manager', 'Engineering Manager', 'Technical Lead',
+        'Solutions Architect', 'Security Engineer', 'QA Engineer',
+        'Mobile Developer', 'iOS Developer', 'Android Developer',
+        'React Developer', 'Python Developer', 'Java Developer',
+        'Go Developer', 'Rust Developer', '.NET Developer'
+    ];
+
+    private array $locations = [
+        'Remote', 'San Francisco, CA', 'New York, NY', 'Seattle, WA',
+        'Austin, TX', 'Boston, MA', 'Denver, CO', 'Portland, OR',
+        'Los Angeles, CA', 'Chicago, IL', 'Miami, FL', 'Atlanta, GA',
+        'Mountain View, CA', 'Palo Alto, CA', 'Menlo Park, CA',
+        'Sunnyvale, CA', 'Redmond, WA', 'Santa Monica, CA',
+        'Boulder, CO', 'Cambridge, MA', 'Arlington, VA', 'Raleigh, NC',
+        'Phoenix, AZ', 'Salt Lake City, UT', 'Dallas, TX', 'Houston, TX',
+        'Philadelphia, PA', 'San Diego, CA', 'Washington, DC'
+    ];
+
+    private array $statuses = [
+        'wishlist', 'applied', 'interview', 'rejected', 'accepted', 'offered'
+    ];
+
     public function __construct(
         private UserPasswordHasherInterface $passwordHasher
     ) {
@@ -20,140 +58,196 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        // Create users
-        $user1 = new User();
-        $user1->setEmail('john.doe@example.com');
-        $user1->setName('John Doe');
-        $hashedPassword = $this->passwordHasher->hashPassword($user1, 'password123');
-        $user1->setPassword($hashedPassword);
-        $user1->setRoles(['ROLE_USER']);
-        $manager->persist($user1);
+        // Create 10 users
+        $users = [];
+        $userNames = [
+            ['John Doe', 'john.doe@example.com'],
+            ['Jane Smith', 'jane.smith@example.com'],
+            ['Michael Johnson', 'michael.johnson@example.com'],
+            ['Emily Davis', 'emily.davis@example.com'],
+            ['David Wilson', 'david.wilson@example.com'],
+            ['Sarah Brown', 'sarah.brown@example.com'],
+            ['Robert Garcia', 'robert.garcia@example.com'],
+            ['Lisa Martinez', 'lisa.martinez@example.com'],
+            ['James Anderson', 'james.anderson@example.com'],
+            ['Jennifer Taylor', 'jennifer.taylor@example.com'],
+        ];
 
-        $user2 = new User();
-        $user2->setEmail('jane.smith@example.com');
-        $user2->setName('Jane Smith');
-        $hashedPassword = $this->passwordHasher->hashPassword($user2, 'password123');
-        $user2->setPassword($hashedPassword);
-        $user2->setRoles(['ROLE_USER']);
-        $manager->persist($user2);
+        foreach ($userNames as [$name, $email]) {
+            $user = new User();
+            $user->setEmail($email);
+            $user->setName($name);
+            $hashedPassword = $this->passwordHasher->hashPassword($user, 'password123');
+            $user->setPassword($hashedPassword);
+            $user->setRoles(['ROLE_USER']);
+            $manager->persist($user);
+            $users[] = $user;
+        }
 
-        // Create job boards for user1
-        $board1 = new JobBoard();
-        $board1->setName('Software Engineering Jobs');
-        $board1->setDescription('Tracking my software engineering job applications');
-        $board1->setUser($user1);
-        $manager->persist($board1);
+        // Create job boards for users
+        $boardTemplates = [
+            ['Software Engineering Jobs', 'Tracking software engineering positions'],
+            ['Remote Opportunities', 'Work from anywhere positions'],
+            ['Senior Level Roles', 'Senior and staff level opportunities'],
+            ['Startup Jobs', 'Early stage startup opportunities'],
+            ['FAANG Applications', 'Applications to big tech companies'],
+            ['Data Science Positions', 'Data science and ML roles'],
+            ['Frontend Development', 'Frontend and UI engineering roles'],
+            ['Backend Engineering', 'Backend and infrastructure positions'],
+            ['Full Stack Roles', 'Full stack development opportunities'],
+            ['DevOps Positions', 'DevOps and SRE roles'],
+        ];
 
-        $board2 = new JobBoard();
-        $board2->setName('Remote Opportunities');
-        $board2->setDescription('Remote job opportunities I am interested in');
-        $board2->setUser($user1);
-        $manager->persist($board2);
+        $boards = [];
+        foreach ($users as $userIndex => $user) {
+            // Each user gets 2-4 job boards
+            $boardCount = rand(2, 4);
+            for ($i = 0; $i < $boardCount; $i++) {
+                $template = $boardTemplates[($userIndex * $boardCount + $i) % count($boardTemplates)];
+                $board = new JobBoard();
+                $board->setName($template[0]);
+                $board->setDescription($template[1]);
+                $board->setUser($user);
+                $manager->persist($board);
+                $boards[] = ['board' => $board, 'user' => $user];
+            }
+        }
 
-        // Create job boards for user2
-        $board3 = new JobBoard();
-        $board3->setName('Data Science Positions');
-        $board3->setDescription('Data science and analytics roles');
-        $board3->setUser($user2);
-        $manager->persist($board3);
+        // Create 200+ job applications
+        $applicationCount = 0;
+        foreach ($boards as $boardData) {
+            $board = $boardData['board'];
 
-        // Create job applications for board1
-        $app1 = new JobApplication();
-        $app1->setCompany('Google');
-        $app1->setJobTitle('Senior Software Engineer');
-        $app1->setUrl('https://careers.google.com/jobs/example');
-        $app1->setSalary('$150,000 - $200,000');
-        $app1->setLocation('Mountain View, CA');
-        $app1->setDescription('Working on cutting-edge technologies in cloud infrastructure.');
-        $app1->setStatus('applied');
-        $app1->setJobBoard($board1);
-        $app1->setCreatedAt(new DateTime('-10 days'));
-        $app1->setAppliedAt(new DateTime('-8 days'));
-        $manager->persist($app1);
+            // Each board gets 5-15 applications
+            $appsPerBoard = rand(5, 15);
 
-        $app2 = new JobApplication();
-        $app2->setCompany('Microsoft');
-        $app2->setJobTitle('Software Engineer II');
-        $app2->setUrl('https://careers.microsoft.com/jobs/example');
-        $app2->setSalary('$140,000 - $180,000');
-        $app2->setLocation('Seattle, WA');
-        $app2->setDescription('Develop innovative solutions for Azure platform.');
-        $app2->setStatus('interviewed');
-        $app2->setJobBoard($board1);
-        $app2->setCreatedAt(new DateTime('-15 days'));
-        $app2->setAppliedAt(new DateTime('-12 days'));
-        $app2->setInterviewedAt(new DateTime('-3 days'));
-        $manager->persist($app2);
+            for ($i = 0; $i < $appsPerBoard; $i++) {
+                $company = $this->companies[array_rand($this->companies)];
+                $jobTitle = $this->jobTitles[array_rand($this->jobTitles)];
+                $location = $this->locations[array_rand($this->locations)];
+                $status = $this->statuses[array_rand($this->statuses)];
 
-        $app3 = new JobApplication();
-        $app3->setCompany('Amazon');
-        $app3->setJobTitle('Software Development Engineer');
-        $app3->setUrl('https://www.amazon.jobs/example');
-        $app3->setSalary('$145,000 - $195,000');
-        $app3->setLocation('Austin, TX');
-        $app3->setDescription('Build scalable distributed systems for AWS services.');
-        $app3->setStatus('wishlist');
-        $app3->setJobBoard($board1);
-        $app3->setCreatedAt(new DateTime('-2 days'));
-        $manager->persist($app3);
+                $app = new JobApplication();
+                $app->setCompany($company);
+                $app->setJobTitle($jobTitle);
+                $app->setLocation($location);
+                $app->setStatus($status);
+                $app->setJobBoard($board);
 
-        // Create job applications for board2
-        $app4 = new JobApplication();
-        $app4->setCompany('GitLab');
-        $app4->setJobTitle('Backend Engineer');
-        $app4->setUrl('https://about.gitlab.com/jobs/example');
-        $app4->setSalary('$130,000 - $170,000');
-        $app4->setLocation('Remote');
-        $app4->setDescription('Work on GitLab core product features.');
-        $app4->setStatus('offered');
-        $app4->setJobBoard($board2);
-        $app4->setCreatedAt(new DateTime('-20 days'));
-        $app4->setAppliedAt(new DateTime('-18 days'));
-        $app4->setInterviewedAt(new DateTime('-10 days'));
-        $app4->setOfferedAt(new DateTime('-2 days'));
-        $manager->persist($app4);
+                // Generate realistic salary range
+                $baseSalary = rand(80, 250) * 1000;
+                $topSalary = $baseSalary + rand(30, 80) * 1000;
+                $app->setSalary('$' . number_format($baseSalary) . ' - $' . number_format($topSalary));
 
-        $app5 = new JobApplication();
-        $app5->setCompany('Stripe');
-        $app5->setJobTitle('Software Engineer');
-        $app5->setUrl('https://stripe.com/jobs/example');
-        $app5->setSalary('$160,000 - $210,000');
-        $app5->setLocation('Remote');
-        $app5->setDescription('Build payment processing systems.');
-        $app5->setStatus('rejected');
-        $app5->setJobBoard($board2);
-        $app5->setCreatedAt(new DateTime('-30 days'));
-        $app5->setAppliedAt(new DateTime('-28 days'));
-        $app5->setInterviewedAt(new DateTime('-15 days'));
-        $app5->setRejectedAt(new DateTime('-7 days'));
-        $manager->persist($app5);
+                // Add URL
+                $app->setUrl($this->generateJobUrl($company));
 
-        // Create job applications for board3
-        $app6 = new JobApplication();
-        $app6->setCompany('Netflix');
-        $app6->setJobTitle('Data Scientist');
-        $app6->setUrl('https://jobs.netflix.com/example');
-        $app6->setSalary('$155,000 - $205,000');
-        $app6->setLocation('Los Gatos, CA');
-        $app6->setDescription('Analyze user behavior and build recommendation systems.');
-        $app6->setStatus('applied');
-        $app6->setJobBoard($board3);
-        $app6->setCreatedAt(new DateTime('-5 days'));
-        $app6->setAppliedAt(new DateTime('-3 days'));
-        $manager->persist($app6);
+                // Add description
+                $app->setDescription($this->generateJobDescription($jobTitle, $company));
 
-        $app7 = new JobApplication();
-        $app7->setCompany('Meta');
-        $app7->setJobTitle('Machine Learning Engineer');
-        $app7->setUrl('https://www.metacareers.com/jobs/example');
-        $app7->setSalary('$170,000 - $220,000');
-        $app7->setLocation('Menlo Park, CA');
-        $app7->setDescription('Develop ML models for content ranking and recommendations.');
-        $app7->setStatus('wishlist');
-        $app7->setJobBoard($board3);
-        $app7->setCreatedAt(new DateTime('-1 day'));
-        $manager->persist($app7);
+                // Set timestamps based on status
+                $createdDaysAgo = rand(1, 90);
+                $app->setCreatedAt(new DateTime("-{$createdDaysAgo} days"));
+
+                switch ($status) {
+                    case 'applied':
+                        $appliedDaysAgo = rand(1, $createdDaysAgo);
+                        $app->setAppliedAt(new DateTime("-{$appliedDaysAgo} days"));
+                        break;
+
+                    case 'interview':
+                        $appliedDaysAgo = rand(5, $createdDaysAgo);
+                        $interviewDaysAgo = rand(1, $appliedDaysAgo - 1);
+                        $app->setAppliedAt(new DateTime("-{$appliedDaysAgo} days"));
+                        $app->setInterviewedAt(new DateTime("-{$interviewDaysAgo} days"));
+                        break;
+
+                    case 'offered':
+                        $appliedDaysAgo = rand(10, $createdDaysAgo);
+                        $interviewDaysAgo = rand(5, $appliedDaysAgo - 2);
+                        $offeredDaysAgo = rand(1, $interviewDaysAgo - 1);
+                        $app->setAppliedAt(new DateTime("-{$appliedDaysAgo} days"));
+                        $app->setInterviewedAt(new DateTime("-{$interviewDaysAgo} days"));
+                        $app->setOfferedAt(new DateTime("-{$offeredDaysAgo} days"));
+                        break;
+
+                    case 'rejected':
+                        $appliedDaysAgo = rand(7, $createdDaysAgo);
+                        $rejectedDaysAgo = rand(1, $appliedDaysAgo - 1);
+                        $app->setAppliedAt(new DateTime("-{$appliedDaysAgo} days"));
+                        if (rand(0, 1)) {
+                            $interviewDaysAgo = rand($rejectedDaysAgo + 1, $appliedDaysAgo - 1);
+                            $app->setInterviewedAt(new DateTime("-{$interviewDaysAgo} days"));
+                        }
+                        $app->setRejectedAt(new DateTime("-{$rejectedDaysAgo} days"));
+                        break;
+
+                    case 'accepted':
+                        $appliedDaysAgo = rand(15, $createdDaysAgo);
+                        $interviewDaysAgo = rand(7, $appliedDaysAgo - 2);
+                        $offeredDaysAgo = rand(3, $interviewDaysAgo - 1);
+                        $app->setAppliedAt(new DateTime("-{$appliedDaysAgo} days"));
+                        $app->setInterviewedAt(new DateTime("-{$interviewDaysAgo} days"));
+                        $app->setOfferedAt(new DateTime("-{$offeredDaysAgo} days"));
+                        break;
+                }
+
+                $manager->persist($app);
+                $applicationCount++;
+            }
+        }
 
         $manager->flush();
+
+        echo "\n========================================\n";
+        echo "Fixtures loaded successfully!\n";
+        echo "========================================\n";
+        echo "Created:\n";
+        echo "  - " . count($users) . " users\n";
+        echo "  - " . count($boards) . " job boards\n";
+        echo "  - {$applicationCount} job applications\n";
+        echo "\nSample login credentials:\n";
+        echo "  Email: john.doe@example.com\n";
+        echo "  Password: password123\n";
+        echo "\nAll users use the same password: password123\n";
+        echo "========================================\n\n";
+    }
+
+    private function generateJobUrl(string $company): string
+    {
+        $companySlug = strtolower(str_replace(' ', '', $company));
+        $domains = [
+            'Google' => 'https://careers.google.com/jobs/',
+            'Microsoft' => 'https://careers.microsoft.com/jobs/',
+            'Amazon' => 'https://www.amazon.jobs/en/jobs/',
+            'Meta' => 'https://www.metacareers.com/jobs/',
+            'Apple' => 'https://jobs.apple.com/en-us/details/',
+            'Netflix' => 'https://jobs.netflix.com/jobs/',
+            'Stripe' => 'https://stripe.com/jobs/listing/',
+            'GitLab' => 'https://about.gitlab.com/jobs/apply/',
+            'GitHub' => 'https://github.com/careers/',
+            'Atlassian' => 'https://www.atlassian.com/company/careers/detail/',
+        ];
+
+        $baseUrl = $domains[$company] ?? "https://{$companySlug}.com/careers/";
+        return $baseUrl . uniqid();
+    }
+
+    private function generateJobDescription(string $jobTitle, string $company): string
+    {
+        $descriptions = [
+            "Join our team at {$company} as a {$jobTitle}. We're looking for talented individuals to help build cutting-edge solutions.",
+            "Exciting opportunity at {$company} for a {$jobTitle}. Work on challenging problems with a world-class team.",
+            "We're hiring a {$jobTitle} to join {$company}. Help us shape the future of technology.",
+            "{$company} is seeking a {$jobTitle} to work on innovative projects that impact millions of users.",
+            "Be part of something special at {$company}. We're looking for a {$jobTitle} to join our growing team.",
+            "Great opportunity for a {$jobTitle} at {$company}. Work with cutting-edge technologies and brilliant engineers.",
+            "Join {$company} as a {$jobTitle} and make a real impact. We offer competitive compensation and great benefits.",
+            "{$company} is expanding! Looking for a talented {$jobTitle} to help us build the next generation of products.",
+            "Seeking a passionate {$jobTitle} to join our team at {$company}. Excellent growth opportunities and work-life balance.",
+            "Transform your career at {$company}. We're hiring a {$jobTitle} to work on mission-critical systems.",
+        ];
+
+        return $descriptions[array_rand($descriptions)];
     }
 }
