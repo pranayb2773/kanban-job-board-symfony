@@ -3,77 +3,264 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block body %}
-<div>
-    <div class="container-fluid px-lg-5 py-4">
-        {% if not has_job_boards %}
-            {# Empty state for new users #}
-            <div class="text-center py-5 px-4">
-                <div class="mx-auto" style="max-width: 500px;">
-                    <i class="bi bi-file-earmark-text text-muted d-block mb-4" style="font-size: 5rem;"></i>
-                    <h2 class="fw-bold mb-3">Welcome to Job Tracker!</h2>
-                    <p class="text-muted mb-4">Get started by creating your first job board to organize and track your job applications.</p>
-                    <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#createJobBoardModal">
-                        <i class="bi bi-plus-circle me-2"></i>
-                        Create Your First Job Board
-                    </button>
+<div class="bg-light min-vh-100">
+<div class="container-fluid px-lg-5 py-4">
+    {% set status_colors = {
+        'wishlist': 'secondary',
+        'applied': 'primary',
+        'interview': 'warning',
+        'offered': 'info',
+        'accepted': 'success',
+        'rejected': 'danger'
+    } %}
+    {% set status_icons = {
+        'wishlist': 'bookmark',
+        'applied': 'send',
+        'interview': 'chat-left-dots',
+        'offered': 'gift',
+        'accepted': 'check-circle',
+        'rejected': 'x-circle'
+    } %}
+    {% if not has_job_boards %}
+        {# Empty state for new users #}
+        <div class="text-center py-5 px-4">
+            <div class="mx-auto" style="max-width: 600px;">
+                <div class="mb-4">
+                    <i class="bi bi-clipboard-data text-primary d-block mb-3" style="font-size: 6rem; opacity: 0.2;"></i>
+                </div>
+                <h2 class="fw-bold mb-3">Welcome to Your Job Tracker!</h2>
+                <p class="text-muted mb-4 fs-5">Start organizing your job search journey. Create your first job board to track applications, interviews, and offers all in one place.</p>
+                <button type="button" class="btn btn-primary btn-lg px-5" data-bs-toggle="modal" data-bs-target="#createJobBoardModal">
+                    <i class="bi bi-plus-circle me-2"></i>
+                    Create Your First Job Board
+                </button>
+                <div class="mt-5 text-start" style="max-width: 500px; margin: 0 auto;">
+                    <p class="fw-bold text-muted mb-3">What you can do:</p>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> Track applications across 6 status stages</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> Organize with multiple job boards</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> Drag & drop to update status</li>
+                        <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> View analytics and progress</li>
+                    </ul>
                 </div>
             </div>
-        {% else %}
-            {# Dashboard with data #}
-            <div class="mb-4">
-                <h1 class="h3 fw-bold">Dashboard</h1>
-                <p class="text-muted">Welcome back, {{ app.user.name }}!</p>
+        </div>
+    {% else %}
+        {# Dashboard Header #}
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="h3 fw-bold mb-1">Dashboard</h1>
+                <p class="text-muted mb-0">
+                    Welcome back, {{ app.user.name }}!
+                    {% if latest_activity_at %}
+                        <span class="mx-2">•</span>
+                        Last activity {{ latest_activity_at|date('M d, Y') }}
+                    {% endif %}
+                </p>
             </div>
+            <div>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createJobBoardModal">
+                    <i class="bi bi-plus-circle me-2"></i>
+                    New Board
+                </button>
+            </div>
+        </div>
 
-            <div class="row g-4 mb-4">
-                <div class="col-md-3">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title text-secondary mb-1">Boards</h5>
-                            <p class="h2 fw-bold text-primary mb-2">{{ job_boards }}</p>
-                            <p class="text-muted small mb-0">Group applications by board</p>
+        {# Overview Stats Cards #}
+        <div class="row g-4 mb-4">
+            <div class="col-xl-3 col-md-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <p class="text-muted mb-1 small text-uppercase fw-semibold">Total Applications</p>
+                                <h2 class="fw-bold mb-0">{{ total_applications }}</h2>
+                            </div>
+                            <div class="bg-primary bg-opacity-10 rounded-3 p-3">
+                                <i class="bi bi-briefcase-fill text-primary fs-4"></i>
+                            </div>
                         </div>
-                    </div>
-                </div>
-
-                <div class="col-md-3">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title text-secondary mb-1">Total Jobs</h5>
-                            <p class="h2 fw-bold text-primary mb-2">{{ total_jobs }}</p>
-                            <p class="text-muted small mb-0">No jobs tracked yet</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-3">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title text-secondary mb-1">Applications</h5>
-                            <p class="h2 fw-bold text-primary mb-2">{{ applied_jobs }}</p>
-                            <p class="text-muted small mb-0">Applications submitted</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-3">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title text-secondary mb-1">Interviews</h5>
-                            <p class="h2 fw-bold text-primary mb-2">{{ interview_jobs }}</p>
-                            <p class="text-muted small mb-0">Upcoming interviews</p>
-                        </div>
+                        <p class="text-muted small mb-0 mt-3">
+                            <span class="text-success fw-semibold">{{ active_applications }} active</span> applications
+                        </p>
                     </div>
                 </div>
             </div>
 
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h2 class="h5 fw-bold mb-4">Recent Activity</h2>
-                    <p class="text-muted mb-0">No recent activity to display.</p>
+            <div class="col-xl-3 col-md-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <p class="text-muted mb-1 small text-uppercase fw-semibold">Job Boards</p>
+                                <h2 class="fw-bold mb-0">{{ job_boards_count }}</h2>
+                            </div>
+                            <div class="bg-info bg-opacity-10 rounded-3 p-3">
+                                <i class="bi bi-kanban-fill text-info fs-4"></i>
+                            </div>
+                        </div>
+                        <p class="text-muted small mb-0 mt-3">
+                            Organizing your search
+                        </p>
+                    </div>
                 </div>
             </div>
-        {% endif %}
-    </div>
+
+            <div class="col-xl-3 col-md-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <p class="text-muted mb-1 small text-uppercase fw-semibold">Last 7 Days</p>
+                                <h2 class="fw-bold mb-0">{{ applications_last_7_days }}</h2>
+                            </div>
+                            <div class="bg-success bg-opacity-10 rounded-3 p-3">
+                                <i class="bi bi-calendar-check text-success fs-4"></i>
+                            </div>
+                        </div>
+                        <p class="text-muted small mb-0 mt-3">
+                            New applications added
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <p class="text-muted mb-1 small text-uppercase fw-semibold">Follow-ups Due</p>
+                                <h2 class="fw-bold mb-0">{{ stale_active_count }}</h2>
+                            </div>
+                            <div class="bg-warning bg-opacity-10 rounded-3 p-3">
+                                <i class="bi bi-bell text-warning fs-4"></i>
+                            </div>
+                        </div>
+                        <p class="text-muted small mb-0 mt-3">
+                            Applied/interview/offered older than 14 days
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Recent Activity and Job Boards #}
+        <div class="row g-4">
+            {# Recent Applications #}
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-white border-0 py-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="fw-bold mb-0">Recent Applications</h5>
+                            <span class="text-muted small">Last 10</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        {% if recent_applications|length > 0 %}
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Company</th>
+                                            <th>Role</th>
+                                            <th>Status</th>
+                                            <th>Board</th>
+                                            <th class="text-end">Last touch</th>
+                                            <th class="text-end">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for application in recent_applications %}
+                                            {% set last_touch = application.rejectedAt ?? application.offeredAt ?? application.interviewedAt ?? application.appliedAt ?? application.createdAt %}
+                                            <tr>
+                                                <td class="fw-semibold">{{ application.company }}</td>
+                                                <td class="text-muted">{{ application.jobTitle }}</td>
+                                                <td>
+                                                    <span class="badge bg-{{ status_colors[application.status] ?? 'secondary' }}">
+                                                        <i class="bi bi-{{ status_icons[application.status] ?? 'circle' }} me-1"></i>
+                                                        {{ application.status|capitalize }}
+                                                    </span>
+                                                </td>
+                                                <td class="text-muted">{{ application.jobBoard.name }}</td>
+                                                <td class="text-end text-muted">{{ last_touch|date('M d, Y') }}</td>
+                                                <td class="text-end">
+                                                    <a href="{{ path('app_job_board_kanban', {'id': application.jobBoard.id}) }}"
+                                                       class="btn btn-sm btn-outline-primary">
+                                                        Open
+                                                    </a>
+                                                    {% if application.url %}
+                                                        <a href="{{ application.url }}" class="btn btn-sm btn-outline-secondary" target="_blank" rel="noopener">
+                                                            <i class="bi bi-box-arrow-up-right"></i>
+                                                        </a>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="text-center py-5">
+                                <i class="bi bi-inbox text-muted d-block mb-3" style="font-size: 3rem; opacity: 0.3;"></i>
+                                <p class="text-muted mb-0">No applications yet. Start adding jobs to your boards!</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            {# Recent Job Boards & Quick Stats #}
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white border-0 py-3">
+                        <h5 class="fw-bold mb-0">Your Job Boards</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        {% if recent_boards_with_stats|length > 0 %}
+                            <div class="list-group list-group-flush">
+                                {% for item in recent_boards_with_stats %}
+                                    {% set board = item.board %}
+                                    <a href="{{ path('app_job_board_kanban', {'id': board.id}) }}"
+                                       class="list-group-item list-group-item-action">
+                                        <div class="d-flex w-100 justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="mb-1 fw-semibold">{{ board.name }}</h6>
+                                                <div class="text-muted small">
+                                                    <span class="fw-semibold">{{ item.active }}</span> active
+                                                    <span class="mx-2">•</span>
+                                                    <span class="fw-semibold">{{ item.total }}</span> total
+                                                </div>
+                                                <div class="mt-2 d-flex flex-wrap gap-1">
+                                                    {% for s in ['wishlist','applied','interview','offered','accepted','rejected'] %}
+                                                        {% if item.statusCounts[s] is defined and item.statusCounts[s] > 0 %}
+                                                            <span class="badge bg-{{ status_colors[s] }}">{{ item.statusCounts[s] }}</span>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                            <i class="bi bi-chevron-right text-muted"></i>
+                                        </div>
+                                    </a>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="text-center py-4">
+                                <p class="text-muted mb-0">No boards yet</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                    {% if job_boards_count > 5 %}
+                        <div class="card-footer bg-white border-0 text-center">
+                            <a href="{{ path('app_job_board_index') }}" class="btn btn-sm btn-link">
+                                View All Boards <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
 </div>
 {% endblock %}
