@@ -51,7 +51,7 @@ Kanban Job Board is a full-featured web application that allows users to track t
 
 ### Backend
 - **PHP 8.5** - Latest PHP version with modern features and enums
-- **Symfony 8.0** - Modern PHP framework with attribute-based routing
+- **Symfony 8.0** - Modern PHP framework with PHP-based routing (`config/routes.php`)
 - **Doctrine ORM 3.5** - Database abstraction and entity management
 - **Twig 3** - Powerful template engine for views
 - **Symfony Security** - Authentication and authorization
@@ -301,7 +301,8 @@ kanban-job-board-symfony/
 │   └── app.js                     # Main JavaScript entry
 ├── config/
 │   ├── packages/                  # Bundle configurations
-│   ├── routes/                    # Route definitions
+│   ├── routes/                    # Framework/dev routes (profiler, errors, etc.)
+│   ├── routes.php                 # Application routes (single source of truth)
 │   └── services.yaml              # Service container
 ├── migrations/                    # Database migrations
 ├── public/
@@ -309,7 +310,7 @@ kanban-job-board-symfony/
 │   └── index.php                  # Application entry point
 ├── src/
 │   ├── Controller/
-│   │   ├── JobBoardController.php # Main Kanban logic (8 routes)
+│   │   ├── JobBoardController.php # Kanban + job board endpoints
 │   │   ├── SecurityController.php # Auth endpoints
 │   │   └── DashboardController.php
 │   ├── Entity/

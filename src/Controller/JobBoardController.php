@@ -15,14 +15,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/job-board')]
 #[IsGranted('ROLE_USER')]
 class JobBoardController extends AbstractController
 {
-    #[Route('/_fragment/job-board-modal', name: 'fragment_job_board_modal', methods: ['GET'])]
     public function modal(): Response
     {
         // Build the Job Board creation form for the modal (used from header)
@@ -37,7 +34,25 @@ class JobBoardController extends AbstractController
         ]);
     }
 
-    #[Route('/create', name: 'app_job_board_create', methods: ['POST'])]
+    public function editModal(int $id, JobBoardRepository $jobBoardRepository): Response
+    {
+        $jobBoard = $jobBoardRepository->findOneByIdAndUser($id, $this->getUser());
+
+        if (!$jobBoard) {
+            throw $this->createNotFoundException('Job board not found');
+        }
+
+        $form = $this->createForm(JobBoardType::class, $jobBoard, [
+            'action' => $this->generateUrl('app_job_board_update', ['id' => $id]),
+            'method' => 'POST',
+        ]);
+
+        return $this->render('partials/_job_board_edit_modal.html.twig', [
+            'job_board_form' => $form->createView(),
+            'job_board' => $jobBoard,
+        ]);
+    }
+
     public function create(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         $jobBoard = new JobBoard();
@@ -73,7 +88,63 @@ class JobBoardController extends AbstractController
         ], Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
-    #[Route('/{id}/kanban', name: 'app_job_board_kanban', methods: ['GET'])]
+    public function update(
+        int $id,
+        Request $request,
+        JobBoardRepository $jobBoardRepository,
+        EntityManagerInterface $entityManager
+    ): JsonResponse {
+        $jobBoard = $jobBoardRepository->findOneByIdAndUser($id, $this->getUser());
+
+        if (!$jobBoard) {
+            return $this->json(['error' => 'Job board not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        $form = $this->createForm(JobBoardType::class, $jobBoard, [
+            'action' => $this->generateUrl('app_job_board_update', ['id' => $id]),
+            'method' => 'POST',
+        ]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->flush();
+
+            return $this->json([
+                'success' => true,
+                'message' => 'Job board updated successfully!',
+            ]);
+        }
+
+        return $this->json([
+            'success' => false,
+            'message' => 'Please fix the form errors and try again.',
+            'modal' => $this->renderView('partials/_job_board_edit_modal.html.twig', [
+                'job_board_form' => $form->createView(),
+                'job_board' => $jobBoard,
+            ]),
+        ], Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
+
+    public function delete(
+        int $id,
+        JobBoardRepository $jobBoardRepository,
+        EntityManagerInterface $entityManager
+    ): JsonResponse {
+        $jobBoard = $jobBoardRepository->findOneByIdAndUser($id, $this->getUser());
+
+        if (!$jobBoard) {
+            return $this->json(['error' => 'Job board not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        $entityManager->remove($jobBoard);
+        $entityManager->flush();
+
+        return $this->json([
+            'success' => true,
+            'message' => 'Job board deleted successfully',
+        ]);
+    }
+
     public function kanban(
         int $id,
         JobBoardRepository $jobBoardRepository,
@@ -94,7 +165,6 @@ class JobBoardController extends AbstractController
         ]);
     }
 
-    #[Route('/application/{id}/details', name: 'app_job_application_details', methods: ['GET'])]
     public function applicationDetails(
         int $id,
         JobApplicationRepository $jobApplicationRepository
@@ -122,7 +192,6 @@ class JobBoardController extends AbstractController
         ]);
     }
 
-    #[Route('/application/{id}/status', name: 'app_job_application_update_status', methods: ['PATCH'])]
     public function updateStatus(
         int $id,
         Request $request,
@@ -168,7 +237,6 @@ class JobBoardController extends AbstractController
         ]);
     }
 
-    #[Route('/{boardId}/_fragment/application-modal', name: 'fragment_job_application_modal', methods: ['GET'])]
     public function applicationModal(
         int $boardId,
         JobBoardRepository $jobBoardRepository
@@ -194,7 +262,6 @@ class JobBoardController extends AbstractController
         ]);
     }
 
-    #[Route('/{boardId}/application/create', name: 'app_job_application_create', methods: ['POST'])]
     public function createApplication(
         int $boardId,
         Request $request,
@@ -241,7 +308,6 @@ class JobBoardController extends AbstractController
         ], Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
-    #[Route('/application/{id}/_fragment/edit-modal', name: 'fragment_job_application_edit_modal', methods: ['GET'])]
     public function editApplicationModal(
         int $id,
         JobApplicationRepository $jobApplicationRepository
@@ -263,7 +329,6 @@ class JobBoardController extends AbstractController
         ]);
     }
 
-    #[Route('/application/{id}/update', name: 'app_job_application_update', methods: ['POST'])]
     public function updateApplication(
         int $id,
         Request $request,
@@ -301,7 +366,6 @@ class JobBoardController extends AbstractController
         ], Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
-    #[Route('/application/{id}/delete', name: 'app_job_application_delete', methods: ['DELETE'])]
     public function deleteApplication(
         int $id,
         JobApplicationRepository $jobApplicationRepository,

@@ -12,7 +12,6 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted('ROLE_USER')]
@@ -24,7 +23,6 @@ class UserController extends AbstractController
     ) {
     }
 
-    #[Route('/profile', name: 'app_user_profile', methods: ['GET'])]
     public function profile(): Response
     {
         /** @var User $user */
@@ -39,7 +37,6 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/profile/update', name: 'app_user_profile_update', methods: ['POST'])]
     public function updateProfile(Request $request): Response
     {
         /** @var User $user */
@@ -68,7 +65,6 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/profile/change-password', name: 'app_user_change_password', methods: ['POST'])]
     public function changePassword(Request $request, UserPasswordHasherInterface $passwordHasher): Response
     {
         /** @var User $user */
